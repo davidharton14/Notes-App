@@ -10,7 +10,7 @@
     </v-layout>
     </v-app-bar>
     <v-layout row wrap justify-center align-start>
-      <v-card class="asd" v-drag width="300" v-for="(note, index) in notes" :key="index">
+      <v-card v-bind:class="currentTheme" v-drag width="300" v-for="(note, index) in notes" :key="index">
         
         <v-card-text outlined color="red">
           
@@ -45,7 +45,9 @@
             color="primary"
             fab
             small
-            @click="chooseColor=true">
+            @click="chooseColor=true;switchTheme(currentTheme,index)"
+           >
+
             <v-icon color="white">mdi-palette</v-icon>
           </v-btn>
         </v-card-text>
@@ -102,22 +104,40 @@
           </v-dialog>
           <v-dialog v-model="chooseColor" width="500">
             <v-card class="pa-4">
-              <v-card-text>
+               <v-card-text >
               <h3>Choose your color card</h3>
-              <div class="theme-option">
-              <div id="theme-blue"></div>
-              <div id="theme-red"></div>
-              <div id="theme-yellow"></div>
-              <div id="theme-grey"></div>
+              <div id="app">
               </div>
-              
-              </v-card-text>
+              <div class="theme-option">
+              <div id="theme-blue" v-bind:class="{'active':currentTheme==='theme-blue'}"
+              v-on:click="switchTheme('theme-blue',color._id)" class="theme-blue"></div>
+
+              <div id="theme-red" v-bind:class="{'active':currentTheme==='theme-red'}"
+              v-on:click="switchTheme('theme-red')" class="theme-red"></div>
+
+              <div id="theme-yellow" v-bind:class="{'active':currentTheme==='theme-yellow'}"
+              v-on:click="switchTheme('theme-yellow')" class="theme-yellow"></div>
+
+              <div id="theme-grey" v-bind:class="{'active':currentTheme==='theme-grey'}"
+              v-on:click="switchTheme('theme-grey')" class="theme-grey"></div>
+
+              <div id="theme-green" v-bind:class="{'active':currentTheme==='theme-green'}"
+              v-on:click="switchTheme('theme-green')" class="theme-green"></div>
+
+              <div id="theme-violet" v-bind:class="{'active':currentTheme==='theme-violet'}"
+              v-on:click="switchTheme('theme-violet')" class="theme-violet"></div>
+
+              <div id="theme-brown" v-bind:class="{'active':currentTheme==='theme-brown'}"
+              v-on:click="switchTheme('theme-brown')" class="theme-brown"></div>
+
+              <div id="theme-pink" v-bind:class="{'active':currentTheme==='theme-pink'}"
+              v-on:click="switchTheme('theme-pink')" class="theme-pink"></div>
+              </div>         
+              </v-card-text>             
               <v-card-actions>
-              <v-btn color="success" @click="deleteNote(notes._id)">Yes</v-btn>
-              <v-btn color="error" @click="deleteNotToAsk = false"
-                >Cancel</v-btn
-              >
-              </v-card-actions>
+                <v-btn color="primary" @click="updateNote(noteEdit._id)"
+                  >Update note</v-btn>
+              </v-card-actions>          
             </v-card>
           </v-dialog>
         </div>
@@ -145,7 +165,9 @@ export default {
       noteId: null,
       newNote: false,
       noteToCreate:new Object(),
-      chooseColor:false
+      chooseColor:false,
+      currentTheme:localStorage.getItem('theme-color'),
+      color:new Object(),
     };
   },
   mounted() {
@@ -196,6 +218,11 @@ export default {
          this.getNotes()
       })
   },
+  switchTheme(theme,index){
+    localStorage.setItem('theme-color',theme,index)
+    this.currentTheme=localStorage.getItem('theme-color')
+    this.color=this.notes[index]
+  }
 },
  components: {
     draggable,
@@ -211,7 +238,123 @@ export default {
   border-left
   : 5px solid red !important;
 }
-.theme-blue{
-  color:blue;
+.theme-option{
+  max-width:800px;
+  margin:0 auto;
+  text-align:right;
+  padding:20px 0;
 }
+  #theme-blue{
+  background-color:blue;
+   cursor:pointer;
+    width:20px;
+    height:20px;
+    border-radius:4px;
+    margin:2px 10px;
+    border:1px solid #fff;
+    display:inline-block;
+    opacity:0.5;
+}
+.theme-blue{
+  border-left:5px solid blue !important;
+}
+#theme-red{
+  background-color:rgb(209, 9, 9);
+   cursor:pointer;
+    width:20px;
+    height:20px;
+    border-radius:4px;
+    margin:2px 10px;
+    border:1px solid #fff;
+    display:inline-block;
+    opacity:0.5;
+}
+.theme-red{
+  border-left:5px solid rgb(209, 9, 9);
+}
+#theme-yellow{
+  background-color:rgb(223, 226, 12);
+   cursor:pointer;
+    width:20px;
+    height:20px;
+    border-radius:4px;
+    margin:2px 10px;
+    border:1px solid #fff;
+    display:inline-block;
+    opacity:0.5;
+}
+.theme-yellow{
+  border-left:5px solid rgb(223, 226, 12);
+}
+#theme-grey{
+  background-color:grey;
+   cursor:pointer;
+    width:20px;
+    height:20px;
+    border-radius:4px;
+    margin:2px 10px;
+    border:1px solid #fff;
+    display:inline-block;
+    opacity:0.5;
+}
+.theme-grey{
+  border-left:5px solid grey;
+}
+#theme-green{
+background-color:rgb(23, 184, 50);
+ cursor:pointer;
+    width:20px;
+    height:20px;
+    border-radius:4px;
+    margin:2px 10px;
+    border:1px solid #fff;
+    display:inline-block;
+    opacity:0.5;
+}
+.theme-green{
+  border-left:5px solid rgb(23, 184, 50);
+}
+#theme-violet{
+background-color:rgb(179, 21, 144);
+ cursor:pointer;
+    width:20px;
+    height:20px;
+    border-radius:4px;
+    margin:2px 10px;
+    border:1px solid #fff;
+    display:inline-block;
+    opacity:0.5;
+}
+.theme-violet{
+  border-left:5px solid rgb(179, 21, 144);
+}
+#theme-brown{
+background-color:rgba(155, 95, 17, 0.842);
+ cursor:pointer;
+    width:20px;
+    height:20px;
+    border-radius:4px;
+    margin:2px 10px;
+    border:1px solid #fff;
+    display:inline-block;
+    opacity:0.5;
+}
+.theme-brown{
+  border-left:5px solid rgba(155, 95, 17, 0.842);
+}
+#theme-pink{
+background-color:rgb(240, 122, 171);
+ cursor:pointer;
+    width:20px;
+    height:20px;
+    border-radius:4px;
+    margin:2px 10px;
+    border:1px solid #fff;
+    display:inline-block;
+    opacity:0.5;
+}
+.theme-pink{
+  border-left:5px solid rgb(240, 122, 171);
+}
+
 </style>
