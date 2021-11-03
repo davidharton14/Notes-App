@@ -52,14 +52,86 @@
           </v-btn>
         </v-card-text>
       </v-card>
-      <v-dialog v-model="newNote" :overlay="false" max-width="500px" transition="scale-transition">
+      <v-dialog v-model="newNote" :overlay="false" max-width="700px" transition="scale-transition">
       <v-card>
         <v-card-text>
-          <v-text-field label="Title" v-model="noteToCreate.title"></v-text-field>
-          <v-textarea auto-grow label="Content" v-model="noteToCreate.content"></v-textarea>
+          <div>
+            <v-menu
+        ref="menu"
+        v-model="menu"
+        :close-on-content-click="false"
+        :return-value.sync="date"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            v-model="date"
+            label="Picker in menu"
+            prepend-icon="mdi-calendar"
+            readonly
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker
+          v-model="date"
+          no-title
+          scrollable
+        >
+          <v-spacer></v-spacer>
+          <v-btn
+            text
+            color="primary"
+            @click="menu = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            text
+            color="primary"
+            @click="$refs.menu.save(date)"
+          >
+            OK
+          </v-btn>
+        </v-date-picker>
+      </v-menu> 
+          <v-text-field 
+            label="Outlined"
+            outlined
+            v-model="task">
+          > 
+          </v-text-field> 
+            <v-btn color="primary lighten-1" fab @click="submitTask">
+        <v-icon>mdi-plus-thick</v-icon>
+      </v-btn> 
+          </div> 
+
+          <div v-for="(task,index) in tasks" :key="index">
+          <h2>{{task.name}}
+           <v-btn
+            class="ml-2"
+            color="primary"
+            fab
+            small
+            @click="editTask(index)">
+            <v-icon color="white">mdi-square-edit-outline</v-icon>
+          </v-btn>
+          <v-btn
+            class="ml-2"
+            color="primary"
+            fab
+            small
+            @click="deleteTask"
+          >
+            <v-icon color="white">mdi-delete</v-icon>
+          </v-btn>
+          </h2>        
+          </div>
         </v-card-text>
         <v-card-actions>
-            <v-btn color="primary" @click="createNote()">Create note</v-btn>
+            <v-btn color="primary" @click="createNote()">Create list</v-btn>
         </v-card-actions>
       </v-card>
       </v-dialog>
@@ -153,8 +225,10 @@
 
 <script>
 import axios from "axios";
-import draggable from 'vuedraggable'
 export default {
+  props:{
+    msg:String
+  },
   data() {
     return {
       user: new Object(),
@@ -168,6 +242,10 @@ export default {
       chooseColor:false,
       currentTheme:localStorage.getItem('theme-color'),
       color:new Object(),
+      task:"",
+      tasks:[],
+       
+      editedTask:null
     };
   },
   mounted() {
@@ -222,10 +300,26 @@ export default {
     localStorage.setItem('theme-color',theme,index)
     this.currentTheme=localStorage.getItem('theme-color')
     this.color=this.notes[index]
+  },
+  submitTask(){
+    if(this.task.length===0)return;
+    if(this.editedTask===null){
+    this.tasks.push({
+      name:this.task, 
+    });
+    }else{
+      this.tasks[this.editedTask].name=this.task
+      this.editedTask=null;
+    }
+    this.task=""
+  },
+  deleteTask(index){
+     this.tasks.splice(index,1)
+  },
+  editTask(index){
+    this.task=this.tasks[index].name
+    this.editedTask=index
   }
-},
- components: {
-    draggable,
 }
 }
 </script>
