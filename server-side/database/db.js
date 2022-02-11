@@ -1,105 +1,60 @@
-const mongoose = require("mongoose");
-const Note = require("../models/Note");
-const User = require("../models/User");
-const MONGO_URL = "mongodb+srv://david:david@cluster0.axzcq.mongodb.net/app";
-// const connectDB = async () => {
-//   try {
-//     const url = "mongodb+srv://david:david@cluster0.axzcq.mongodb.net/app";
-//     mongoose.connect(url, {
-//       useNewUrlParser: true,
-//     });
-
-//     const db = mongoose.connection;
-//     db.once("open", (_) => {
-//       console.log("Database connected:", url);
-//     });
-//   } catch (err) {
-//     console.log("err");
-//   }
-// };
+const Article = require("../models/Article");
+const Reference = require("../models/Reference");
+Article.hasMany(Reference, { onDelete: 'Cascade' })
 
 class Controller {
-  constructor() {
-    this.connect();
-  }
-  async connect() {
-    try {
-      await mongoose.connect(MONGO_URL, {
-        useNewUrlParser: true,
-      });
-      console.info("Connect to DB");
-    } catch (err) {
-      console.error(err);
-    }
-  }
-  addUser(res, data) {
-    User.create(data, (err, newUser) => {
-      if (err) throw err;
-      res.json({
+  addArticle(res, data) {
+    Article.create(data, () => {
+      
+    }).then((err,newArticle) => {
+      res.status(200).json({
         status: 200,
         message: "Created",
-        user: newUser,
+        user: newArticle,
+      });
+  })
+}
+  updateArticle(res, _id, data) {
+   Article.update(
+      {
+        title: data.body.title,
+        abstract: data.body.abstract,
+      },
+      { where: { _id: data.params.id_article } }
+    ).then(() => {
+      res.status(200).json({
+          status: true,
+          message: "Book updated successfully with id = " + _id
       });
     });
   }
-  login(res, data) {
-    User.findOne(
+  getArticle(res, id) {
+    Article.findOne(
       {
-        $and: [{ email: data.email }, { password: data.password }],
+        _id: id,
       },
-      (err, user) => {
+      (err, article) => {
         if (err) throw err;
         res.json({
           status: 200,
           message: "ok",
-          user,
+          article,
         });
       }
     );
   }
-  updateUser(res, id, data) {
-    User.updateOne(
-      {
-        _id: id,
-      },
-      data,
-      (err, updateUser) => {
-        if (err) throw err;
-        res.json({
-          status: 200,
-          message: "Updated",
-          user: updateUser,
-        });
-      }
-    );
-  }
-  getUser(res, id) {
-    User.findOne(
-      {
-        _id: id,
-      },
-      (err, user) => {
-        if (err) throw err;
-        res.json({
-          status: 200,
-          message: "ok",
-          user,
-        });
-      }
-    );
-  }
-  getUsers(res, data) {
-    User.find({}, data, (err, user) => {
+  getArticles(res, data) {
+    Article.find({}, data, (err, getArticles) => {
       if (err) throw err;
       res.json({
         status: 200,
         message: "ok",
-        user: getUsers,
+        article: getArticles,
       });
     });
   }
-  deleteUser(res, id) {
-    User.deleteOne(
+  deleteArticle(res, id) {
+    Article.deleteOne(
       {
         _id: id,
       },
@@ -112,49 +67,49 @@ class Controller {
       }
     );
   }
-  addNote(res, data) {
-    Note.create(data, (err, newNote) => {
+  addReference(res, data) {
+    Reference.create(data, (err, newReference) => {
       if (err) throw err;
       res.json({
         status: 200,
         message: "Created",
-        note: newNote,
+        reference: newReference,
       });
     });
   }
-  getNotes(res, userId) {
-    Note.find(
+  getReferences(res, referenceId) {
+    Reference.find(
       {
-        id_user: userId,
+        id_reference: referenceId,
       },
-      (err, notes) => {
+      (err, references) => {
         if (err) throw err;
         res.json({
           status: 200,
           message: "ok",
-          notes,
+          references,
         });
       }
     );
   }
-  updateNote(res, id, data) {
-    Note.updateOne(
+  updateReference(res, id, data) {
+    Reference.updateOne(
       {
         _id: id,
       },
       data,
-      (err, updateNote) => {
+      (err, updateReference) => {
         if (err) throw err;
         res.json({
           status: 200,
           message: "Updated",
-          note: updateNote,
+          reference: updateReference,
         });
       }
     );
   }
-  deleteNote(res, id) {
-    Note.deleteOne(
+  deleteReference(res, id) {
+    Reference.deleteOne(
       {
         _id: id,
       },
