@@ -13,9 +13,8 @@ const[user,setUser]=useState({})
     },[id])
     const getSingleUser=async(id)=>{
     const response = await axios.get(`/api/users/${id}`)
-if (response.data.data) { // echivalet al response.status === true
-setUser(response.data)
-console.log(response.data.name)
+if (response.data.data) {
+setUser(response.data.data)
 }
     }  
     return(
